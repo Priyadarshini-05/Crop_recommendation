@@ -1,90 +1,729 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Crop Recommendation</title>
-
+    <title>Crop Recommendation System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial;
-            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        .floating-icon {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.1);
+            user-select: none;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .icon-1 { top: 10%; left: 5%; animation: float 6s ease-in-out infinite; }
+        .icon-2 { top: 70%; left: 10%; animation: float 8s ease-in-out infinite; }
+        .icon-3 { top: 20%; right: 5%; animation: float 7s ease-in-out infinite; }
+        .icon-4 { bottom: 10%; right: 15%; animation: float 9s ease-in-out infinite; }
+        .icon-5 { top: 50%; left: 15%; animation: float 10s ease-in-out infinite; }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header Section */
+        .header {
             text-align: center;
-            padding: 30px;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
         }
 
-        h2 {
+        .header h1 {
+            color: white;
+            font-size: 2.8em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+        }
+
+        .header h1 i {
+            margin-right: 15px;
+            color: #ffd700;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2em;
+            font-weight: 300;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 15px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: 700;
             color: #333;
+            margin-top: 5px;
         }
 
-        form {
+        /* Main Form Card */
+        .form-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .form-title {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-title i {
+            color: #667eea;
+            margin-right: 15px;
+            font-size: 1.3em;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        .input-group label i {
+            color: #667eea;
+            margin-right: 8px;
+            width: 18px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 20px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            display: inline-block;
-            box-shadow: 0px 0px 10px gray;
         }
 
-        input {
-            padding: 8px;
-            margin: 5px;
-            width: 200px;
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
 
-        button {
-            padding: 10px 20px;
-            background-color: green;
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .input-wrapper input:focus + i {
+            color: #667eea;
+        }
+
+        /* Unit badges */
+        .unit-badge {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 0.9em;
+            font-weight: 500;
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 6px;
+            pointer-events: none;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .predict-btn {
+            flex: 2;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 5px;
+            padding: 16px 30px;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
         }
 
-        button:hover {
-            background-color: darkgreen;
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
         }
 
-        .result {
-            margin-top: 20px;
-            font-size: 20px;
-            color: darkblue;
+        .predict-btn i {
+            font-size: 1.2em;
+        }
+
+        .reset-btn {
+            flex: 1;
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .reset-btn:hover {
+            background: #f5f5f5;
+            border-color: #999;
+            transform: translateY(-2px);
+        }
+
+        /* Result Section */
+        .result-container {
+            margin-top: 30px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-icon {
+            font-size: 4em;
+            color: #28a745;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        .result-label {
+            font-size: 1.2em;
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 2.8em;
+            color: #333;
+            font-weight: 700;
+            text-transform: capitalize;
+            letter-spacing: 1px;
+        }
+
+        .result-desc {
+            margin-top: 15px;
+            color: #666;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .result-desc span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .result-desc i {
+            color: #667eea;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .result-value {
+                font-size: 2.2em;
+            }
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            cursor: help;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85em;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Form footer */
+        .form-footer {
+            margin-top: 25px;
+            text-align: center;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .form-footer i {
+            color: #ff6b6b;
         }
     </style>
 </head>
-
 <body>
 
-<h2>🌾 Crop Recommendation System</h2>
+    <!-- Floating background icons -->
+    <div class="floating-icon icon-1"><i class="fas fa-seedling"></i></div>
+    <div class="floating-icon icon-2"><i class="fas fa-cloud-sun"></i></div>
+    <div class="floating-icon icon-3"><i class="fas fa-tint"></i></div>
+    <div class="floating-icon icon-4"><i class="fas fa-temperature-high"></i></div>
+    <div class="floating-icon icon-5"><i class="fas fa-leaf"></i></div>
 
-<form action="/predict" method="post">
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-leaf"></i> 
+                Crop Recommendation System
+            </h1>
+            <p>Smart agricultural solutions powered by AI</p>
+        </div>
 
-    <input type="text" name="N" placeholder="Nitrogen"
-    value="{{ values.N if values else '' }}"><br>
+        <!-- Stats Cards (Example data - you can make these dynamic) -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-seedling"></i></div>
+                <div class="stat-label">Total Crops</div>
+                <div class="stat-value">22</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-temperature-high"></i></div>
+                <div class="stat-label">Optimal Temp</div>
+                <div class="stat-value">15-35°C</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-cloud-rain"></i></div>
+                <div class="stat-label">Rainfall Range</div>
+                <div class="stat-value">50-300 mm</div>
+            </div>
+        </div>
 
-    <input type="text" name="P" placeholder="Phosphorus"
-    value="{{ values.P if values else '' }}"><br>
+        <!-- Main Form Card -->
+        <div class="form-card">
+            <div class="form-title">
+                <i class="fas fa-clipboard-list"></i>
+                Enter Soil & Environmental Parameters
+            </div>
 
-    <input type="text" name="K" placeholder="Potassium"
-    value="{{ values.K if values else '' }}"><br>
+            <form action="/predict" method="post" id="cropForm">
+                <div class="input-grid">
+                    <!-- Nitrogen -->
+                    <div class="input-group">
+                        <label>
+                            <i class="fas fa-flask"></i>
+                            Nitrogen (N)
+                            <span class="tooltip">
+                                <i class="far fa-question-circle"></i>
+                                <span class="tooltip-text">Essential for leaf growth and green color</span>
+                            </span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="number" step="0.01" name="N" placeholder="0-140" 
+                                   value="{{ values.N if values else '' }}" required>
+                            <i class="fas fa-flask"></i>
+                            <span class="unit-badge">ppm</span>
+                        </div>
+                    </div>
 
-    <input type="text" name="temperature" placeholder="Temperature"
-    value="{{ values.temperature if values else '' }}"><br>
+                    <!-- Phosphorus -->
+                    <div class="input-group">
+                        <label>
+                            <i class="fas fa-flask"></i>
+                            Phosphorus (P)
+                            <span class="tooltip">
+                                <i class="far fa-question-circle"></i>
+                                <span class="tooltip-text">Important for root development</span>
+                            </span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="number" step="0.01" name="P" placeholder="0-140"
+                                   value="{{ values.P if values else '' }}" required>
+                            <i class="fas fa-flask"></i>
+                            <span class="unit-badge">ppm</span>
+                        </div>
+                    </div>
 
-    <input type="text" name="humidity" placeholder="Humidity"
-    value="{{ values.humidity if values else '' }}"><br>
+                    <!-- Potassium -->
+                    <div class="input-group">
+                        <label>
+                            <i class="fas fa-flask"></i>
+                            Potassium (K)
+                            <span class="tooltip">
+                                <i class="far fa-question-circle"></i>
+                                <span class="tooltip-text">Helps in overall plant health</span>
+                            </span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="number" step="0.01" name="K" placeholder="0-140"
+                                   value="{{ values.K if values else '' }}" required>
+                            <i class="fas fa-flask"></i>
+                            <span class="unit-badge">ppm</span>
+                        </div>
+                    </div>
 
-    <input type="text" name="ph" placeholder="pH"
-    value="{{ values.ph if values else '' }}"><br>
+                    <!-- Temperature -->
+                    <div class="input-group">
+                        <label>
+                            <i class="fas fa-temperature-high"></i>
+                            Temperature
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="number" step="0.1" name="temperature" placeholder="0-50"
+                                   value="{{ values.temperature if values else '' }}" required>
+                            <i class="fas fa-temperature-high"></i>
+                            <span class="unit-badge">°C</span>
+                        </div>
+                    </div>
 
-    <input type="text" name="rainfall" placeholder="Rainfall"
-    value="{{ values.rainfall if values else '' }}"><br><br>
+                    <!-- Humidity -->
+                    <div class="input-group">
+                        <label>
+                            <i class="fas fa-tint"></i>
+                            Humidity
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="number" step="0.1" name="humidity" placeholder="0-100"
+                                   value="{{ values.humidity if values else '' }}" required>
+                            <i class="fas fa-tint"></i>
+                            <span class="unit-badge">%</span>
+                        </div>
+                    </div>
 
-    <button type="submit">Predict Crop</button>
-</form>
+                    <!-- pH -->
+                    <div class="input-group">
+                        <label>
+                            <i class="fas fa-vial"></i>
+                            pH Level
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="number" step="0.1" name="ph" placeholder="0-14"
+                                   value="{{ values.ph if values else '' }}" required>
+                            <i class="fas fa-vial"></i>
+                            <span class="unit-badge">pH</span>
+                        </div>
+                    </div>
 
-{% if result %}
-    <div class="result">
-        🌱 Recommended Crop: <b>{{ result }}</b>
+                    <!-- Rainfall -->
+                    <div class="input-group">
+                        <label>
+                            <i class="fas fa-cloud-rain"></i>
+                            Rainfall
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="number" step="0.1" name="rainfall" placeholder="0-500"
+                                   value="{{ values.rainfall if values else '' }}" required>
+                            <i class="fas fa-cloud-rain"></i>
+                            <span class="unit-badge">mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="submit" class="predict-btn" id="predictBtn">
+                        <i class="fas fa-magic"></i>
+                        Predict Crop
+                        <span class="loading" style="display: none;"></span>
+                    </button>
+                    <button type="button" class="reset-btn" onclick="resetForm()">
+                        <i class="fas fa-redo-alt"></i>
+                        Reset
+                    </button>
+                </div>
+            </form>
+
+            <!-- Result Section -->
+            {% if result %}
+            <div class="result-container">
+                <div class="result-card">
+                    <div class="result-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="result-label">Recommended Crop</div>
+                    <div class="result-value">{{ result }}</div>
+                    <div class="result-desc">
+                        <span><i class="fas fa-check-circle" style="color: #28a745;"></i> Optimal for your soil</span>
+                        <span><i class="fas fa-calendar-alt"></i> Ready for planting</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Form Footer -->
+            <div class="form-footer">
+                <i class="fas fa-heart"></i> 
+                Making farming smarter with AI • Enter accurate values for best results
+            </div>
+        </div>
     </div>
-{% endif %}
 
+    <script>
+        // Loading animation on form submit
+        document.getElementById('cropForm').addEventListener('submit', function(e) {
+            const btn = document.getElementById('predictBtn');
+            const loading = btn.querySelector('.loading');
+            const btnText = btn.querySelector('i.fa-magic');
+            
+            btnText.style.display = 'none';
+            loading.style.display = 'inline-block';
+            btn.disabled = true;
+        });
+
+        // Reset form function
+        function resetForm() {
+            document.getElementById('cropForm').reset();
+            // Remove result if exists (you may need to handle this with backend)
+        }
+
+        // Input validation
+        const inputs = document.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                const min = parseFloat(this.min) || 0;
+                const max = parseFloat(this.max) || 999;
+                let value = parseFloat(this.value);
+                
+                if (this.value !== '') {
+                    if (value < min) this.value = min;
+                    if (value > max) this.value = max;
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-card, .form-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>
